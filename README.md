@@ -1,12 +1,10 @@
-# APIRest-client-php
-
 ## Description
-Ce client est conçu pour communiquer avec l'api netim REST.
-Il peut être intégré à tous vos projets php.
+This client is designed to communicate with the netim Rest API.
+It can be integrated into all your PHP projects.
 
 ## Configuration
-La configuration se fait via le fichier conf.xml où vous pouvez y spécifier l'url de l'API, votre login, le secret et la langue de votre choix.
-Pour le login et le secret vous pouvez aussi les outrepasser à l'instanciation de l'objet en donnant le login et le secret au constructeur
+The configuration is done via the conf.xml file where you can specify the API URL, your login, the secret and the language of your choice.
+For the login and the secret you can also override them at the instantiation of the object by giving the login and the secret to the constructor
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -18,8 +16,8 @@ Pour le login et le secret vous pouvez aussi les outrepasser à l'instanciation 
 </configuration>
 ```
 
-## Utilisation
-Pour communiquer avec l'API, instanciez un objet APIRest et utilisez ses méthodes pour communiquer.
+## Usage
+To communicate with the API, instantiate an APIRest object and use its methods to communicate.
 
 ```php
 include 'APIRest.php';
@@ -30,7 +28,7 @@ $api = new APIRest();
 $api->hello();
 
 ```
-Par défaut la session est fermée à la destruction de l'objet. Il est conseillé de fermer manuellement la session quand vous n'en avez plus besoin si vous instanciez plusieurs fois l'objet, afin de ne pas dépasser votre quota de sessions.
+By default, the session is closed when the object is destroyed. It is advisable to manually close the session when you no longer need it if you instantiate the object several times, so as not to exceed your session quota.
 
 ```php
 $api = new APIRest();
