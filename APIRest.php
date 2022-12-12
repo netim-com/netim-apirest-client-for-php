@@ -3,7 +3,7 @@
 /** 
  * @created 2021-04-02
  * @lastUpdated 2022-11-09
- * @version 1.0
+ * @version 1.01
  *
  * Generic class for a NETIM REST client API. 
  * Documentation @ https://support.netim.com/en/docs/resellers/apis/rest-api
@@ -79,9 +79,9 @@
 
 namespace Netim {
 
-	use stdClass;
-
 	require_once __DIR__ . '/NetimAPIException.php';
+
+	use stdClass;
 
 	class APIRest
 	{
@@ -191,7 +191,14 @@ namespace Netim {
 		{
 			return $this->_lastError;
 		}
-
+		public function getUserID()
+		{
+			return $this->_userID;
+		}
+		public function getUserPassword()
+		{
+			return $this->_secret;
+		}
 		# ---------------------------------------------------
 		# PRIVATE UTILITIES
 		# ---------------------------------------------------
