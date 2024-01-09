@@ -91,7 +91,7 @@ namespace Netim {
 		private $_userID;
 		private $_secret;
 		private $_apiURL;
-		private $_defaultLanguage;
+		private $_preferences;
 
 		private $_lastRequestParams;
 		private $_lastRequestRessource;
@@ -110,9 +110,10 @@ namespace Netim {
 		 * 
 		 * @link semantic versionning http://semver.org/ by Tom Preston-Werner 
 		 */
-		public function __construct(string $userID = null, string $secret = null)
+		public function __construct(string $userID = null, string $secret = null, array $preferences = [])
 		{
 			register_shutdown_function([&$this, "__destruct"]);
+
 			// Init variables
 			$this->_connected = false;
 			$this->_sessionID = null;
@@ -123,38 +124,47 @@ namespace Netim {
 
 			$conf = get_object_vars(simplexml_load_file($confpath));
 
-			if (is_null($userID) && is_null($secret)) //No parameters
-			{
-				if (!array_key_exists('login', $conf) || empty($conf['login']))
-					throw new NetimAPIException("Missing or empty <login> in conf file.");
-
-				if (!array_key_exists('secret', $conf) || empty($conf['secret']))
-					throw new NetimAPIException("Missing or empty <secret> in conf file.");
-
-				$this->_userID = trim($conf['login']);
-				$this->_secret = trim($conf['secret']);
-			} else //With parameters
-			{
-				if (empty($userID))
-					throw new NetimAPIException("Missing \$userID.");
-
-				if (empty($secret))
-					throw new NetimAPIException("Missing \$secret.");
-
-				$this->_userID = $userID;
-				$this->_secret = $secret;
+			// Login
+			if (isset($userID)) {
+				if (empty($userID)) {
+					throw new NetimAPIException('Missing $userID.');
+				}
+			} else {
+				if (empty($conf['login'])) {
+					throw new NetimAPIException('Missing <login> in conf file.');
+				}
+				$userID = trim($conf['login']);
 			}
 
-			if (!array_key_exists('url', $conf) || empty($conf['url']))
-				throw new NetimAPIException("Missing or empty <url> in conf file.");
+			// Password
+			if (isset($secret)) {
+				if (empty($secret)) {
+					throw new NetimAPIException('Missing $secret.');
+				}
+			} else {
+				if (empty($conf['secret'])) {
+					throw new NetimAPIException('Missing <secret> in conf file.');
+				}
+				$secret = trim($conf['secret']);
+			}
 
-			$this->_apiURL = $conf['url'];
+			// API URL
+			if (empty($conf['url'])) {
+				throw new NetimAPIException('Missing or empty <url> in conf file.');
+			}
+			$apiURL = $conf['url'];
 
+			// Session preferences
+			if (empty($preferences)) {
+				if (!empty($conf['preferences'])) {
+					$preferences = get_object_vars($conf['preferences']);
+				}
+			}
 
-			if (in_array($conf['language'], array("EN", "FR")))
-				$this->_defaultLanguage = $conf['language'];
-			else
-				$this->_defaultLanguage = "EN";
+			$this->_apiURL = $apiURL;
+			$this->_userID = $userID;
+			$this->_secret = $secret;
+			$this->_preferences = $preferences;
 		}
 
 		public function __destruct()
@@ -191,6 +201,7 @@ namespace Netim {
 		{
 			return $this->_lastError;
 		}
+
 		public function getUserID()
 		{
 			return $this->_userID;
@@ -199,6 +210,11 @@ namespace Netim {
 		{
 			return $this->_secret;
 		}
+		public function getPreferences($key = null)
+		{
+			return (isset($key)) ? $this->_preferences[$key] : $this->_preferences;
+		}
+
 		# ---------------------------------------------------
 		# PRIVATE UTILITIES
 		# ---------------------------------------------------
@@ -287,6 +303,10 @@ namespace Netim {
 						$this->_sessionID = $result['access_token'];
 						$this->_connected = true;
 					} else {
+						$request = json_encode($params, JSON_PRETTY_PRINT);
+						$response = json_encode(json_decode($json, true), JSON_PRETTY_PRINT);
+						var_dump($request, $response);
+
 						if (array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
 						else
@@ -368,9 +388,9 @@ namespace Netim {
 		 *
 		 * @throws NetimAPIException
 		 */
-		public function sessionOpen():void
+		public function sessionOpen(array $preferences = []): void
 		{
-			$this->call("session/", "POST");
+			$this->call("session/", "POST", ["preferences" => $this->getPreferences()]);
 		}
 
 		/**
@@ -412,17 +432,15 @@ namespace Netim {
 		/**
 		 * Updates the settings of the current session. 
 		 *
-		 * @param string $type Setting to be modified : lang
-		 *                                              sync
-		 * @param string $value New value of the Setting : lang = EN / FR
-		 *                                                 sync = 0 (for asynchronous) / 1 (for synchronous) 
-		 * @throws NetimAPIException
+		 * @param	array	$preferences	Preferences of the API session
+		 * 
+		 * @throws	NetimAPIException
 		 *
 		 * @see sessionSetPreference API https://support.netim.com/en/wiki/SessionSetPreference
 		 */
-		public function sessionSetPreference(string $type, string $value):void
+		public function sessionSetPreference(array $preferences = []): void
 		{
-			$this->call("session/", "PATCH", array("type" => $type, "value" => $value));
+			$this->call("session/", "PATCH", ['preferences' => $preferences]);
 		}
 
 		/**
