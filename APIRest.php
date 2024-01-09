@@ -768,7 +768,7 @@ namespace Netim {
 		 *
 		 * @see queryOpe API http://support.netim.com/en/wiki/QueryOpe
 		 */
-		public function queryOpe(int $idOpe):stdClass
+		public function opeInfo(int $idOpe):stdClass
 		{
 			return $this->call("operation/$idOpe", "GET");
 		}
@@ -789,35 +789,20 @@ namespace Netim {
 		}
 
 		/**
-		 * Returns the status (opened/closed) for all operations for the extension 
+		 * Returns a list of pending operations  
 		 * 
-		 * @param string $tld Extension (uppercase without dot)
-		 * 
-		 * @throws NetimAPIException
-		 * 
-		 * @return object An associative array with (Name of the operation, boolean active)
-		 * 
-		 * @see queryOpeList API https://support.netim.com/en/wiki/QueryOpeList
-		 * 
-		 */
-		public function queryOpeList(string $tld):stdClass
-		{
-			return $this->call("tld/$tld/operations/", "GET");
-		}
-
-		/**
-		 * Returns the list of pending operations processing 
+		 * @param	array	$filters	Filters to apply to the query
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return StructQueryOpePending[]  the list of pending operations processing 
+		 * @return StructOpeList[]  the list of operations 
 		 * 
 		 * @see queryOpePending API https://support.netim.com/en/wiki/QueryOpePending
 		 * 
 		 */
-		public function queryOpePending():array
+		public function opeList(array $filters = []): array
 		{
-			return $this->call('operations/pending/', "GET");
+			return $this->call('operations/', "POST", ["filters" => $filters]);
 		}
 
 		/**
