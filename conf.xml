@@ -4,6 +4,6 @@
 	<login>login</login>
 	<secret>secret</secret>
 	<preferences>
-		<language>EN</language>
+		<lang>EN</lang>
 	</preferences>
 </configuration>

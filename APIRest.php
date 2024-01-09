@@ -165,6 +165,9 @@ namespace Netim {
 			$this->_userID = $userID;
 			$this->_secret = $secret;
 			$this->_preferences = $preferences;
+			if (empty($this->_preferences['lang'])) {
+				$this->_preferences['lang'] = 'EN';
+			}
 		}
 
 		public function __destruct()

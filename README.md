@@ -12,7 +12,9 @@ For the login and the secret you can also override them at the instantiation of 
     <url>http://oterest.netim.com/1.0/</url>
     <login>login</login>
     <secret>secret</secret>
-    <language>EN</language>
+    <preferences>
+		<lang>EN</lang>
+	</preferences>
 </configuration>
 ```
 
