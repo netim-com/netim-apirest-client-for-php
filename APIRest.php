@@ -830,12 +830,9 @@ namespace Netim {
 		 * @see queryContactList API https://support.netim.com/en/wiki/QueryContactList
 		 * 
 		 */
-		public function queryContactList(string $filter = "", string $field = ""):array
+		public function contactList(array $filters = []):array
 		{
-			if (empty($filter) && empty($field))
-				return $this->call("contacts/", "GET");
-			else
-				return $this->call("contacts/$field/$filter/", "GET");
+			return $this->call("contacts/", "POST", ["filters" => $filters]);
 		}
 
 		# -------------------------------------------------
@@ -959,17 +956,17 @@ namespace Netim {
 		}
 
 		/**
-		 * @param string $filter The filter applies onto the host name 
+		 * @param	string	$filter	The filter applies onto the host name 
 		 * 
-		 * @throws NetimAPIException
+		 * @throws	NetimAPIException
 		 *
-		 * @return array An array of StructHostList
+		 * @return	array	An array of StructHostList
 		 *
-		 * @see queryHostList API http://support.netim.com/en/wiki/QueryHostList
+		 * @see hostList API http://support.netim.com/en/wiki/hostList
 		 */
-		public function queryHostList(string $filter):array
+		public function hostList(array $filters):array
 		{
-			return $this->call("hosts/$filter", "GET");
+			return $this->call("hosts/", "POST", ["filters" => $filters]);
 		}
 
 		/**
