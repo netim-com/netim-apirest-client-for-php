@@ -879,6 +879,20 @@ namespace Netim {
 		}
 
 		/**
+		 * Returns all informations about a host object
+		 * 
+		 * @param	string	$host	hostname
+		 *
+		 * @throws NetimAPIException
+		 *
+		 * @return StructHostInfo
+		 */
+		public function hostInfo(string $host): stdClass
+		{
+			return $this->call("host/$host", "GET");
+		}
+
+		/**
 		 * Deletes an Host at the registry 
 		 *
 		 * Example
