@@ -272,7 +272,7 @@ namespace Netim {
 					return;
 
 				if ($this->isSessionOpen($ressource, $httpVerb))
-					$header = ["Accept-Language: $this->_defaultLanguage", "Authorization: Basic " . base64_encode("$this->_userID:$this->_secret"), "Content-Type: application/json"];
+					$header = ["Accept-Language: " . $this->getPreferences('lang'), "Authorization: Basic " . base64_encode("$this->_userID:$this->_secret"), "Content-Type: application/json"];
 				else
 					$header = ["Authorization: Bearer $this->_sessionID", "Content-type: application/json"];
 
