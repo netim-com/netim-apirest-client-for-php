@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<url>http://oterest.netim.com/3.0/</url>
+	<login>login</login>
+	<secret>secret</secret>
+	<preferences>
+		<lang>EN</lang>
+	</preferences>
+</configuration>
