@@ -1,3 +1,5 @@
+# APIRest-client-php
+
 ## Description
 This client is designed to communicate with the netim Rest API.
 It can be integrated into all your PHP projects.
