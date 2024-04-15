@@ -1033,7 +1033,7 @@ namespace Netim {
 		 * @param string $ns4 the name of the fourth dns
 		 * @param string $ns5 the name of the fifth dns
 		 * @param int $duration how long the domain will be created
-		 * @param int $templateDNS OPTIONAL number of the template DNS created on netim.com/direct
+		 * @param array $options additional options
 		 *
 		 * @throws NetimAPIException
 		 *
@@ -1041,7 +1041,7 @@ namespace Netim {
 		 *
 		 * @see domainCreate API http://support.netim.com/en/wiki/DomainCreate 
 		 */
-		public function domainCreate(string $domain, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5, int $duration, int $templateDNS = null):stdClass
+		public function domainCreate(string $domain, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5, int $duration, array $options = null):stdClass
 		{
 			$domain = strtolower($domain);
 
@@ -1058,8 +1058,9 @@ namespace Netim {
 
 			$params["duration"] = $duration;
 
-			if (!empty($templateDNS))
-				$params["templateDNS"] = $templateDNS;
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
 
 			return $this->call("domain/$domain/", "POST", $params);
 		}
@@ -1239,6 +1240,7 @@ namespace Netim {
 		 * @param string $ns3 the name of the third dns
 		 * @param string $ns4 the name of the fourth dns
 		 * @param string $ns5 the name of the fifth dns
+		 * @param array $options additional options
 		 *
 		 * @throws NetimAPIException
 		 *
@@ -1246,7 +1248,7 @@ namespace Netim {
 		 *
 		 * @see domainTransferIn API http://support.netim.com/en/wiki/DomainTransferIn
 		 */
-		public function domainTransferIn(string $domain, string $authID, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5):stdClass
+		public function domainTransferIn(string $domain, string $authID, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5, array $options = null):stdClass
 		{
 			$domain = strtolower($domain);
 
@@ -1262,6 +1264,10 @@ namespace Netim {
 			$params["ns3"] = $ns3;
 			$params["ns4"] = $ns4;
 			$params["ns5"] = $ns5;
+
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
 
 			return $this->call("domain/$domain/transfer/", "POST", $params);
 		}
@@ -1305,6 +1311,7 @@ namespace Netim {
 		 * @param string $ns3 the name of the third dns
 		 * @param string $ns4 the name of the fourth dns
 		 * @param string $ns5 the name of the fifth dns
+		 * @param array $options additional options
 		 *
 		 * @throws NetimAPIException
 		 *
@@ -1312,7 +1319,7 @@ namespace Netim {
 		 *
 		 * @see domainTransferTrade API http://support.netim.com/en/wiki/domainTransferTrade
 		 */
-		public function domainTransferTrade(string $domain, string $authID, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5):stdClass
+		public function domainTransferTrade(string $domain, string $authID, string $idOwner, string $idAdmin, string $idTech, string $idBilling, string $ns1, string $ns2, string $ns3, string $ns4, string $ns5, array $options = null):stdClass
 		{
 			$domain = strtolower($domain);
 
@@ -1328,6 +1335,10 @@ namespace Netim {
 			$params["ns3"] = $ns3;
 			$params["ns4"] = $ns4;
 			$params["ns5"] = $ns5;
+
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
 
 			return $this->call("domain/$domain/transfer-trade/", "POST", $params);
 		}
@@ -1530,10 +1541,15 @@ namespace Netim {
 		 * @see domainTransferOwner API http://support.netim.com/en/wiki/DomainTransferOwner
 		 * @see function createContact
 		 */
-		public function domainTransferOwner(string $domain, string $idOwner):stdClass
+		public function domainTransferOwner(string $domain, string $idOwner, array $options = null):stdClass
 		{
 			$domain = strtolower($domain);
 			$params["idOwner"] = $idOwner;
+
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
+
 			return $this->call("domain/$domain/transfer-owner/", "PUT", $params);
 		}
 
@@ -1562,6 +1578,7 @@ namespace Netim {
 		 * @param string $idAdmin id of the admin contact
 		 * @param string $idTech id of the tech contact
 		 * @param string $idBilling id of the billing contact
+		 * @param array $options additional options
 		 * 
 		 * @throws NetimAPIException
 		 *
@@ -1570,12 +1587,17 @@ namespace Netim {
 		 * @see domainChangeContact API http://support.netim.com/en/wiki/DomainChangeContact
 		 * @see function createContact
 		 */
-		public function domainChangeContact(string $domain, string $idAdmin, string $idTech, string $idBilling):stdClass
+		public function domainChangeContact(string $domain, string $idAdmin, string $idTech, string $idBilling, array $options = null):stdClass
 		{
 			$domain = strtolower($domain);
 			$params["idAdmin"] = $idAdmin;
 			$params["idTech"] = $idTech;
 			$params["idBilling"] = $idBilling;
+
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
+
 			return $this->call("domain/$domain/contacts/", "PUT", $params);
 		}
 
