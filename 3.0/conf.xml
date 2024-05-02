@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-	<url>http://oterest.netim.com/3.0/</url>
+	<url>http://dev.rest.netim.com/3.0/</url>
 	<login>login</login>
-	<secret>secret</secret>
+	<password>password</password>
 	<preferences>
 		<lang>EN</lang>
+		<idClient>SN616</idClient>
+		<notif>0</notif>
 	</preferences>
 </configuration>
