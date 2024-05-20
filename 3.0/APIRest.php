@@ -1772,7 +1772,9 @@ namespace Netim {
 		}
 
 		/**
-		 * Returns the list of all prices for each tld 
+		 * Returns the list of all prices for each tld
+		 * 
+		 * @param string $tld optional tld to get the price for 
 		 * 
 		 * @throws NetimAPIException
 		 * 
@@ -1780,9 +1782,15 @@ namespace Netim {
 		 * 
 		 * @see domainPriceList API http://support.netim.com/en/wiki/DomainPriceList
 		 */
-		public function domainPriceList():array
+		public function domainPriceList(string $tld = null):array
 		{
-			return $this->call("/tlds/price-list/", "GET");
+			if ($tld) {
+				$params['tld'] = $tld;
+				return $this->call("/tlds/price-list/", "GET", $params);
+
+			} else {
+				return $this->call("/tlds/price-list/", "GET");
+			}
 		}
 
 		/**
@@ -1793,12 +1801,12 @@ namespace Netim {
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return StructQueryDomainPrice
+		 * @return StructDomainGetPrices
 		 * 
-		 * @see queryDomainPrice API https://support.netim.com/en/wiki/QueryDomainPrice
+		 * @see domainGetPrices API https://support.netim.com/en/wiki/domainGetPrices
 		 * 
 		 */
-		public function queryDomainPrice(string $domain, string $authID = ""):stdClass
+		public function domainGetPrices(string $domain, string $authID = ""):stdClass
 		{
 			$params = array();
 			$domain = strtolower($domain);
