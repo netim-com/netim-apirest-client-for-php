@@ -1895,14 +1895,14 @@ namespace Netim {
 		 * @param string $subdomain subdomain
 		 * @param string $type type of DNS record. Accepted values are: 'A', 'AAAA', 'MX, 'CNAME', 'TXT', 'NS and 'SRV'
 		 * @param string $value value of the new DNS record
-		 * @param array $options StructOptionsZone : settings of the new DNS record 
+		 * @param array $options StructZoneParam : settings of the new DNS record 
 		 *
 		 * @throws NetimAPIException
 		 *
 		 * @return StructOperationResponse giving information on the status of the operation
 		 *
 		 * @see domainZoneCreate API http://support.netim.com/en/wiki/DomainZoneCreate
-		 * @see StructOptionsZone http://support.netim.com/en/wiki/StructOptionsZone
+		 * @see StructZoneParam http://support.netim.com/en/wiki/StructZoneParam
 		 */
 		public function domainZoneCreate(string $domain, string $subdomain, string $type, string $value, array $options):stdClass
 		{
@@ -3100,13 +3100,13 @@ namespace Netim {
 		 * @param string $subdomain subdomain
 		 * @param string $type type of DNS record. Accepted values are: 'A', 'AAAA', 'MX, 'CNAME', 'TXT', 'NS and 'SRV'
 		 * @param string $value value of the new DNS record
-		 * @param array $options  StructOptionsZone : settings of the new DNS record 
+		 * @param array $options  StructZoneParam : settings of the new DNS record 
 		 *
 		 * @throws NetimAPIException
 		 *
 		 * @return StructOperationResponse giving information on the status of the operation
 		 *
-		 * @see StructOptionsZone http://support.netim.com/en/wiki/StructOptionsZone
+		 * @see StructZoneParam http://support.netim.com/en/wiki/StructZoneParam
 		 */
 		public function webHostingZoneCreate(string $domain, string $subdomain, string $type, string $value, array $options): stdClass
 		{
