@@ -5,7 +5,6 @@
 	<password>password</password>
 	<preferences>
 		<lang>EN</lang>
-		<idClient>SN616</idClient>
 		<notif>0</notif>
 	</preferences>
 </configuration>
