@@ -308,7 +308,6 @@ namespace Netim {
 					} else {
 						$request = json_encode($params, JSON_PRETTY_PRINT);
 						$response = json_encode(json_decode($json, true), JSON_PRETTY_PRINT);
-						var_dump($request, $response);
 
 						if (array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
