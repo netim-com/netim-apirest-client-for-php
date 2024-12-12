@@ -2021,7 +2021,7 @@ namespace Netim {
 		 * 
 		 * @return Array
 		 */
-		public function domainZoneInfo(string $domain): stdClass
+		public function domainZoneInfo(string $domain)
 		{
 			$params[] = $domain;
 			return $this->call("/domain/$domain/zone/info/", 'GET');
