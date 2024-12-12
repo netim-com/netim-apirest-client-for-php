@@ -2,7 +2,7 @@
 
 /** 
  * @created 2021-04-02
- * @lastUpdated 2022-11-09
+ * @lastUpdated 2024-12-12
  * @version 1.01
  *
  * Generic class for a NETIM REST client API. 
@@ -2010,6 +2010,22 @@ namespace Netim {
 			$params["minimumUnit"] = $minimumUnit;
 
 			return $this->call("/domain/$domain/zone/init-soa/", "PATCH", $params);
+		}
+
+		
+		/**
+		 * Returns informations about a DNS zone
+		 * 
+		 * @param string 	$domain Domain name
+		 * 
+		 * @throws NetimAPIException
+		 * 
+		 * @return Array
+		 */
+		public function domainZoneInfo(string $domain): stdClass
+		{
+			$params[] = $domain;
+			return $this->call("/domain/$domain/zone/info/", 'GET');
 		}
 
 		/**
