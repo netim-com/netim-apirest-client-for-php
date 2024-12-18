@@ -2,7 +2,7 @@
 
 /** 
  * @created 2021-04-02
- * @lastUpdated 2024-12-12
+ * @lastUpdated 2024-12-18
  * @version 1.01
  *
  * Generic class for a NETIM REST client API. 
@@ -1628,19 +1628,19 @@ namespace Netim {
 		 *	//continue processing
 		 *	```
 		 *
-		 * @param string $domain name of the domain to get the AuthID
-		 * @param int $sendToRegistrant recipient of the AuthID. Possible value are 0 for the reseller and 1 for the registrant
+		 * @param	string	$domain	name of the domain to get the AuthID
+		 * @param	int		$sendTo	Send the authorization code to 0: Reseller, 1: Registrant, 2: None
 		 *
 		 * @throws NetimAPIException
 		 *
 		 * @return StructOperationResponse giving information on the status of the operation
 		 *
-		 * @see domainAuthID API http://support.netim.com/en/wiki/DomainAuthID
+		 * @see domainAuthID API https://support.netim.com/en/docs/api-rest-3-0/domain-names/send-authid
 		 */
-		public function domainAuthID(string $domain, int $sendToRegistrant):stdClass
+		public function domainAuthID(string $domain, int $sendTo):stdClass
 		{
 			$domain = strtolower($domain);
-			$params["sendtoregistrant"] = $sendToRegistrant;
+			$params["sendto"] = $sendTo;
 			return $this->call("domain/$domain/authid/", "PATCH", $params);
 		}
 
