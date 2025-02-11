@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-	<url>http://dev.rest.netim.com/3.0/</url>
+	<url>http://rest.netim.com/3.0/</url>
 	<login>login</login>
 	<password>password</password>
 	<preferences>

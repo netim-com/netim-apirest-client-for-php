@@ -1754,7 +1754,7 @@ namespace Netim {
 		{
 			return $this->call("/domain/$domain/ds-record/", 'DELETE');
 		}
-		
+
 		/**
 		 * List DS records of a domain if it does not use NETIM’s DNS servers.
 		 *
