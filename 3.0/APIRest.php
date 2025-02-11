@@ -1712,30 +1712,61 @@ namespace Netim {
 		}
 
 		/**
-		 * Allows to sign a domain name with DNSSEC if it doesn't use NETIM DNS servers 
-		 * 
-		 * @param string 	$domain name of the domain
-		 * @param array		$DSRecords An object StructDSRecord
-		 * @param int 		$flags
-		 * @param int		$protocol
-		 * @param int		$algo
-		 * @param string	$pubKeys
-		 * 
-		 * @throws NetimAPIException
-		 * 
-		 * @return StructOperationResponse giving information on the status of the operation
-		 * 
-		 * @see domainSetDNSSecExt API http://support.netim.com/en/wiki/DomainSetDNSSecExt
+		 * Add DS records to a domain if it does not use NETIM’s DNS servers.
+		 *
+		 * @param	string	$domain		Domain name
+		 * @param	array	$data		Array of dsData or keyData to be added
+		 *
+		 * @return	StructOperationResponse		Operation result
+		 *
+		 * @see		https://support.netim.com/en/docs/api-rest-3-0/domain-names/ds-record-create
 		 */
-		public function domainSetDNSSecExt(string $domain, array $DSRecords, int $flags, int $protocol, int $algo, string $pubKey):stdClass
+		public function domainDSRecordCreate(string $domain, array $data = [])
 		{
-			$domain = strtolower($domain);
-			$params["DSRecords"] = $DSRecords;
-			$params["flags"] = $flags;
-			$params["protocol"] = $protocol;
-			$params["algo"] = $algo;
-			$params["pubKey"] = $pubKey;
-			return $this->call("/domain/$domain/dnssec/", "PATCH", $params);
+			return $this->call("/domain/$domain/ds-record/", 'POST', ['data' => $data]);
+		}
+
+		/**
+		 * Remove DS records from a domain if it does not use NETIM’s DNS servers.
+		 *
+		 * @param	string	$domain		Domain name
+		 * @param	array	$data		Array of dsData or keyData to be removed
+		 *
+		 * @return	StructOperationResponse		Operation result
+		 *
+		 * @see		https://support.netim.com/en/docs/api-rest-3-0/domain-names/ds-record-delete
+		 */
+		public function domainDSRecordDelete(string $domain, array $data = [])
+		{
+			return $this->call("/domain/$domain/ds-record/", 'DELETE', ['data' => $data]);
+		}
+
+		/**
+		 * Remove all DS records from a domain if it does not use NETIM’s DNS servers.
+		 *
+		 * @param	string	$domain		Domain name
+		 *
+		 * @return	StructOperationResponse		Operation result
+		 *
+		 * @see		https://support.netim.com/en/docs/api-rest-3-0/domain-names/ds-record-delete-all
+		 */
+		public function domainDSRecordDeleteAll(string $domain)
+		{
+			return $this->call("/domain/$domain/ds-record/", 'DELETE');
+		}
+		
+		/**
+		 * List DS records of a domain if it does not use NETIM’s DNS servers.
+		 *
+		 * @param	string	$domain		Domain name
+		 *
+		 * @return	StructOperationResponse		Operation result
+		 *
+		 * @see		https://support.netim.com/en/docs/api-rest-3-0/domain-names/ds-record-list
+		 */
+		public function domainDSRecordList(string $domain)
+		{
+			return $this->call("/domain/$domain/ds-record/", 'GET');
 		}
 
 		/**
