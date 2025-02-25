@@ -2059,6 +2059,24 @@ namespace Netim {
 		}
 
 		/**
+		 * Investigates the state of the domain name from the top to the bottom of the DNS tree.
+		 * 
+		 * @param	string	$domain			Domain name
+		 * @param	array	$nameservers	Nameservers to test
+		 * 
+		 * @throws	NetimAPIException
+		 * 
+		 * @return	array
+		 */
+		public function domainZoneCheck(string $domain, array $nameservers)
+		{
+			$params = [
+				'nameservers' => $nameservers,
+			];
+			return $this->call("/domain/$domain/zone/check/", 'POST', $params);
+		}
+
+		/**
 		 * Returns all DNS records of a domain name 
 		 * 
 		 * @param string $domain Domain name
