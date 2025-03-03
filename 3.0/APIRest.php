@@ -2396,6 +2396,20 @@ namespace Netim {
 		}
 
 		/**
+		 * List SSL certificates matching filters
+		 *
+		 * @param	array	$filters	Filters to apply to the query
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	array
+		 */
+		public function sslList(array $filters = []): array
+		{
+			return $this->call('ssl/list/', 'POST', ['filters' => $filters]);
+		}
+
+		/**
 		 * Creates a web hosting
 		 * 
 		 * @param string $fqdn Fully qualified domain of the main vhost. Warning, the secondary vhosts will always be subdomains of this FQDN
