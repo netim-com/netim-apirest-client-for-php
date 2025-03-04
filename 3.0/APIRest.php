@@ -3240,5 +3240,10 @@ namespace Netim {
 
 			return $this->call("/webhosting/$fqdn/zone/", "DELETE", $params);
 		}
+
+		public function brandProtectionList(array $filters = []): array
+		{
+			return $this->call('brandprotection//list/', 'POST', ['filters' => $filters]);
+		}
 	}
 }
