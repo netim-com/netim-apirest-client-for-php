@@ -475,13 +475,11 @@ namespace Netim {
 		 * Returns the list of parameters reseller account
 		 *
 		 *
-		 * @return StructQueryResellerAccount A structure of StructQueryResellerAccount containing the information
+		 * @return StructAccountInfo A structure of StructAccountInfo containing the information
 		 * 
 		 * @throws NetimAPIException
-		 *
-		 * @see queryResellerAccount API https://support.netim.com/en/wiki/QueryResellerAccount
 		 */
-		public function queryResellerAccount():stdClass
+		public function accountInfo():stdClass
 		{
 			return $this->call("account/", "GET");
 		}
@@ -1821,10 +1819,8 @@ namespace Netim {
 		 * 
 		 * @return int 0: no claim ; 1: at least one claim
 		 * 
-		 * @see queryDomainClaim API https://support.netim.com/en/wiki/QueryDomainClaim
-		 * 
 		 */
-		public function queryDomainClaim(string $domain):int
+		public function domainCheckClaims(string $domain):int
 		{
 			$domain = strtolower($domain);
 			return $this->call("/domain/$domain/claim/", "GET");
@@ -2083,12 +2079,10 @@ namespace Netim {
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return array An array of StructQueryZoneList
-		 *
-		 * @see queryZoneList API https://support.netim.com/en/wiki/QueryZoneList
+		 * @return array An array of StructDomainZoneList
 		 *
 		 */
-		public function queryZoneList(string $domain):array
+		public function domainZoneList(string $domain):array
 		{
 			$domain = strtolower($domain);
 			return $this->call("/domain/$domain/zone/", "GET");
@@ -2168,11 +2162,9 @@ namespace Netim {
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return array An array of StructQueryMailFwdList
-		 * 
-		 * @see queryMailFwdList API https://support.netim.com/en/wiki/QueryMailFwdList
+		 * @return array An array of StructDomainMailFwdList
 		 */
-		public function queryMailFwdList(string $domain):array
+		public function domainMailFwdList(string $domain):array
 		{
 			$domain = strtolower($domain);
 			return $this->call("/domain/$domain/mail-forwardings/", "GET");
@@ -2259,12 +2251,10 @@ namespace Netim {
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return array An array of StructQueryWebFwdList
-		 *
-		 * @see queryWebFwdList API https://support.netim.com/en/wiki/QueryWebFwdList
+		 * @return array An array of StructDomainWebFwdList
 		 *
 		 */
-		public function queryWebFwdList(string $domain):array
+		public function domainWebFwdList(string $domain):array
 		{
 			$domain = strtolower($domain);
 			return $this->call("/domain/$domain/web-forwardings/", "GET");
@@ -3158,7 +3148,7 @@ namespace Netim {
 		 * 
 		 * @throws NetimAPIException
 		 * 
-		 * @return StructQueryZoneList[]
+		 * @return StructDomainZoneList[]
 		 */
 		public function webHostingZoneList(string $fqdn): array
 		{
