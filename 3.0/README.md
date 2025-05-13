@@ -11,12 +11,12 @@ For the login and the secret you can also override them at the instantiation of 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-    <url>http://oterest.netim.com/3.0/</url>
-    <login>login</login>
-    <secret>secret</secret>
-    <preferences>
-        <lang>EN</lang>
-    </preferences>
+	<url>http://dev.rest.netim.com/3.0/</url>
+	<name>AA001_test</name>
+	<key>password</key>
+	<preferences>
+		<lang>EN</lang>
+	</preferences>
 </configuration>
 ```
 

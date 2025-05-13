@@ -19,9 +19,9 @@
  * 
  * Then you can instantiate a APIRest object:
  * ```php
- * 		$name = 'yourUsername';
- * 		$key = 'yourkey';
- * 		$client = new APIRest($username, $key);
+ * 		$name = 'AA001_user';
+ * 		$key = 'ae60edc974fd9f019710bcf463113eb2053b434b49a2e8b8e5a2933632e7e355';
+ * 		$client = new APIRest($name, $key);
  * ```
  * 
  * You can also create a conf.xml file next to the APIRest.php class with the login credentials to connect to the API with no parameters
