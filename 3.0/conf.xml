@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-	<url>http://rest.netim.com/3.0/</url>
-	<login>login</login>
-	<password>password</password>
+	<url>http://dev.rest.netim.com/3.0/</url>
+	<name>AA001_test</name>
+	<key>password</key>
 	<preferences>
 		<lang>EN</lang>
 		<notif>0</notif>

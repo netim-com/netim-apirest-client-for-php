@@ -268,6 +268,7 @@ namespace Netim {
 				$json = curl_exec($ch);
 				$result = json_decode($json, true);
 				$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+				
 				curl_close($ch);
 
 				$this->_lastHttpStatus = $status_code;
@@ -277,7 +278,7 @@ namespace Netim {
 						unset($this->_sessionID);
 						$this->_connected = false;
 					} else {
-						if (array_key_exists("message", $result))
+						if (is_array($result) && array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
 						else
 							throw new NetimAPIException("");
@@ -287,10 +288,11 @@ namespace Netim {
 						$this->_sessionID = $result['access_token'];
 						$this->_connected = true;
 					} else {
-						if (array_key_exists("message", $result))
+						if (is_array($result) && array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
-						else
+						else {
 							throw new NetimAPIException("");
+						}
 					}
 				} else {
 					if (!preg_match('/^2/', strval($status_code))) // Code doesn't start with "2xx"
@@ -299,7 +301,7 @@ namespace Netim {
 							unset($this->_sessionID);
 							$this->_connected = false;
 						}
-						if (array_key_exists("message", $result ?? array()))
+						if (is_array($result) && array_key_exists("message", $result ?? array()))
 							throw new NetimAPIException($result['message']);
 						else
 							throw new NetimAPIException("" . $this->getLastHttpStatus());

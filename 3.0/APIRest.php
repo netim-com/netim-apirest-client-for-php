@@ -19,9 +19,9 @@
  * 
  * Then you can instantiate a APIRest object:
  * ```php
- * 		$username = 'yourUsername';
- * 		$secret = 'yourSecret';
- * 		$client = new APIRest($username, $secret);
+ * 		$name = 'yourUsername';
+ * 		$key = 'yourkey';
+ * 		$client = new APIRest($username, $key);
  * ```
  * 
  * You can also create a conf.xml file next to the APIRest.php class with the login credentials to connect to the API with no parameters
@@ -88,8 +88,8 @@ namespace Netim {
 		private $_connected;
 		private $_sessionID;
 
-		private $_userID;
-		private $_secret;
+		private $_name;
+		private $_key;
 		private $_apiURL;
 		private $_preferences;
 
@@ -103,14 +103,12 @@ namespace Netim {
 		/**
 		 * Constructor for class APIRest
 		 *
-		 * @param string $userID the ID the client uses to connect to his NETIM account
-		 * @param string $secret the SECRET the client uses to connect to his NETIM account
-		 *	 
-		 * @throws Error if $userID, $secret or $apiURL are not string or are empty
-		 * 
-		 * @link semantic versionning http://semver.org/ by Tom Preston-Werner 
+		 * @param	string	$name	API user name
+		 * @param	string	$key	API key
+		 *
+		 * @throws Error if $name, $key or $apiURL are not string or are empty
 		 */
-		public function __construct(string $userID = null, string $secret = null, array $preferences = [])
+		public function __construct(string $name = null, string $key = null, array $preferences = [])
 		{
 			register_shutdown_function([&$this, "__destruct"]);
 
@@ -125,27 +123,27 @@ namespace Netim {
 			$conf = get_object_vars(simplexml_load_file($confpath));
 
 			// Login
-			if (isset($userID)) {
-				if (empty($userID)) {
-					throw new NetimAPIException('Missing $userID.');
+			if (isset($name)) {
+				if (empty($name)) {
+					throw new NetimAPIException('Missing $name.');
 				}
 			} else {
 				if (empty($conf['login'])) {
 					throw new NetimAPIException('Missing <login> in conf file.');
 				}
-				$userID = trim($conf['login']);
+				$name = trim($conf['login']);
 			}
 
 			// Password
-			if (isset($secret)) {
-				if (empty($secret)) {
-					throw new NetimAPIException('Missing $secret.');
+			if (isset($key)) {
+				if (empty($key)) {
+					throw new NetimAPIException('Missing $key.');
 				}
 			} else {
-				if (empty($conf['secret'])) {
-					throw new NetimAPIException('Missing <secret> in conf file.');
+				if (empty($conf['key'])) {
+					throw new NetimAPIException('Missing <key> in conf file.');
 				}
-				$secret = trim($conf['secret']);
+				$key = trim($conf['key']);
 			}
 
 			// API URL
@@ -162,8 +160,8 @@ namespace Netim {
 			}
 
 			$this->_apiURL = $apiURL;
-			$this->_userID = $userID;
-			$this->_secret = $secret;
+			$this->_name = $name;
+			$this->_key = $key;
 			$this->_preferences = $preferences;
 			if (empty($this->_preferences['lang'])) {
 				$this->_preferences['lang'] = 'EN';
@@ -205,13 +203,13 @@ namespace Netim {
 			return $this->_lastError;
 		}
 
-		public function getUserID()
+		public function getName()
 		{
-			return $this->_userID;
+			return $this->_name;
 		}
-		public function getUserPassword()
+		public function getKey()
 		{
-			return $this->_secret;
+			return $this->_key;
 		}
 		public function getPreferences($key = null)
 		{
@@ -272,7 +270,7 @@ namespace Netim {
 					return;
 
 				if ($this->isSessionOpen($ressource, $httpVerb))
-					$header = ["Accept-Language: " . $this->getPreferences('lang'), "Authorization: Basic " . base64_encode("$this->_userID:$this->_secret"), "Content-Type: application/json"];
+					$header = ["Accept-Language: " . $this->getPreferences('lang'), "Authorization: Basic " . base64_encode("$this->_name:$this->_key"), "Content-Type: application/json"];
 				else
 					$header = ["Authorization: Bearer $this->_sessionID", "Content-type: application/json"];
 
@@ -296,7 +294,7 @@ namespace Netim {
 						unset($this->_sessionID);
 						$this->_connected = false;
 					} else {
-						if (array_key_exists("message", $result))
+						if (is_array($result) && array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
 						else
 							throw new NetimAPIException("");
@@ -309,7 +307,7 @@ namespace Netim {
 						$request = json_encode($params, JSON_PRETTY_PRINT);
 						$response = json_encode(json_decode($json, true), JSON_PRETTY_PRINT);
 
-						if (array_key_exists("message", $result))
+						if (is_array($result) && array_key_exists("message", $result))
 							throw new NetimAPIException($result['message']);
 						else
 							throw new NetimAPIException("");
