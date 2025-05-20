@@ -1851,7 +1851,7 @@ namespace Netim {
 		 * @return	array
 		 *
 		 */
-		public function domainProductList(string $tld): array
+		public function domainProductInfo(string $tld): array
 		{
 			$tld = trim(mb_strtolower($tld));
 			return $this->call("/domains/product/$tld/", 'GET');
@@ -2422,7 +2422,7 @@ namespace Netim {
 		 *
 		 * @return	array
 		 */
-		public function sslProductList(string $product): array
+		public function sslProductInfo(string $product): array
 		{
 			$product = trim(mb_strtoupper($product));
 			return $this->call("/ssl/product/$product/", 'GET');
