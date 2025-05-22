@@ -1676,38 +1676,6 @@ namespace Netim {
 		}
 
 		/**
-		 * Returns all available operations for a given TLD 
-		 * 
-		 * Example:
-		 *	```php
-		 *	$res = null;
-		 *	try
-		 *	{
-		 *		$res = $client->domainTldInfo("COM"); //or 'com'
-		 *	}
-		 *	catch (NetimAPIexception $exception)
-		 *	{
-		 *		//do something about the error
-		 *	}
-		 *
-		 *	$domainInfo = $res;
-		 *	//continue processing
-		 *	```
-		 *	
-		 * @param string $tld a valid tld without the dot before it
-		 *
-		 * @throws NetimAPIException
-		 *
-		 * @return StructDomainTldInfo information about the tld
-		 *
-		 * @see domainTldInfo API http://support.netim.com/fr/wiki/DomainTldInfo
-		 */
-		public function domainTldInfo(string $tld):stdClass
-		{
-			return $this->call("tld/$tld/", "GET");
-		}
-
-		/**
 		 * Add DS records to a domain if it does not use NETIM’s DNS servers.
 		 *
 		 * @param	string	$domain		Domain name
