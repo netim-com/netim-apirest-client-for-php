@@ -1641,41 +1641,6 @@ namespace Netim {
 		}
 
 		/**
-		 * Adds a membership to the domain name 
-		 *
-		 * Example
-		 *	```php
-		 *	$domain = 'myDomain.com';
-		 *	$token = 'qmksjdmqsjdmkl'; //replace with your token here
-		 *	$res = null;
-		 *	try
-		 *	{
-		 *		$res = $client->domainSetMembership($domain, $token);
-		 *	}
-		 *	catch (NetimAPIexception $exception)
-		 *	{
-		 *		//do something when operation had an error
-		 *	}
-		 *	//continue processing
-		 *	```
-		 *
-		 * @param string $domain name of domain
-		 * @param string $token membership number into the community
-		 *
-		 * @throws NetimAPIException
-		 *
-		 * @return StructOperationResponse giving information on the status of the operation
-		 *
-		 * @see domainSetMembership API http://support.netim.com/en/wiki/DomainSetMembership
-		 */
-		public function domainSetMembership(string $domain, string $token):stdClass
-		{
-			$domain = strtolower($domain);
-			$params["token"] = $token;
-			return $this->call("/domain/$domain/membership/", "PATCH", $params);
-		}
-
-		/**
 		 * Add DS records to a domain if it does not use NETIM’s DNS servers.
 		 *
 		 * @param	string	$domain		Domain name
