@@ -3193,9 +3193,153 @@ namespace Netim {
 			return $this->call("/webhosting/$fqdn/zone/", "DELETE", $params);
 		}
 
-		public function brandProtectionList(array $filters = []): array
+
+		/**
+		 * BRAND PROTECTIONS
+		 */
+
+		/**
+		 * Create a new brand protection
+		 *
+		 * @param	string	$label		Brand main label
+		 * @param	string	$product	Brand protection product ID
+		 * @param	integer	$duration	Period of validity in years
+		 * @param	string	$idOwner	ID of the owner contact
+		 * @param	string	$type		Brand’s type
+		 * @param	array	$infos		Array of strings containing brand datas
+		 *
+		 * @return	StructOperationResponse
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/create-protection
+		 */
+		public function brandProtectionCreate(string $label, string $product, int $duration, string $idOwner, string $type, array $infos = [])
 		{
-			return $this->call('brandprotection//list/', 'POST', ['filters' => $filters]);
+			$params = [
+				'label' => $label,
+				'prod' => $product,
+				'duration' => $duration,
+				'idOwner' => $idOwner,
+				'type' => $type,
+				'infos' => $infos,
+			];
+			return $this->call('brandprotection/', 'POST', $params);
 		}
+
+		/**
+		 * Return all information about a brand protection
+		 *
+		 * @param	string	$id		Brand protection ID
+		 *
+		 * @return	StructBrandProtectionInfo
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/get-protection-information
+		 */
+		public function brandProtectionInfo(string $id)
+		{
+			return $this->call("brandprotection/$id/", 'GET');
+		}
+
+		/**
+		 * Return all information about a brand protection product
+		 *
+		 * @param	string	$product	Brand protection product ID
+		 *
+		 * @return	array
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/get-product-information
+		 */
+		public function brandProtectionProductInfo(string $product)
+		{
+			return $this->call("brandprotection/product/$product/", 'GET');
+		}
+
+		/**
+		 * List brand protections matching filters
+		 *
+		 * @param	array	$filters	Search filters
+		 *
+		 * @return	array
+		 *
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/get-protection-list
+		 */
+		public function brandProtectionList(array $filters = [])
+		{
+			$params = [
+				'filters' => $filters,
+			];
+			return $this->call('brandprotection/list/', 'POST', $params);
+		}
+
+		/**
+		 * Request the transfer of the ownership to another party
+		 *
+		 * @param	string	$id 		Brand protection ID
+		 * @param	string	$idOwner	ID of the owner contact
+		 *
+		 * @return	StructOperationResponse
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/change-owner-of-protection
+		 */
+		public function brandProtectionTransferOwner(string $id, string $idOwner)
+		{
+			$params = [
+				'idOwner' => $idOwner,
+			];
+			return $this->call("brandprotection/$id/transfer-owner/", 'PUT', $params);
+		}
+
+		/**
+		 * Renew a brand protection for a new period
+		 *
+		 * @param	string	$id 		Brand protection ID
+		 * @param	int		$duration	Duration in years.
+		 *
+		 * @return	StructOperationResponse
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/renew-protection
+		 */
+		public function brandProtectionRenew(string $id, int $duration)
+		{
+			$params = [
+				'duration' => $duration,
+			];
+			return $this->call("brandprotection/$id/renew/", 'PATCH', $params);
+		}
+
+		/**
+		 * Delete a brand protection
+		 *
+		 * @param	string	$id		Brand protection ID
+		 *
+		 * @return	StructOperationResponse
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/delete-protection
+		 */
+		public function brandProtectionDelete(string $id)
+		{
+			return $this->call("brandprotection/$id/", 'DELETE');
+		}
+
+		/**
+		 * Set brand protection preference
+		 *
+		 * @param	string	$IDBP 		Brand protection ID
+		 * @param	string	$codePref	Preference to update ("auto_renew", "to_be_renewed")
+		 * @param	string	$enable		"0" to disable, "1" to enable.
+		 *
+		 * @return	StructOperationResponse
+		 * 
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/set-auto-renew
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/set-to-be-renewed
+		 */
+		public function brandProtectionSetPreference(string $id, string $codePref, string $enable)
+		{
+			$params = [
+				'codePref' => $codePref,
+				'value' => $enable,
+			];
+			return $this->call("brandprotection/$id/preference/", 'PATCH', $params);
+		}
+
 	}
 }
