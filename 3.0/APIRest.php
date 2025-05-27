@@ -1781,10 +1781,10 @@ namespace Netim {
 		 * 
 		 * @throws	NetimAPIException
 		 * 
-		 * @return	array
+		 * @return	stdClass
 		 *
 		 */
-		public function domainProductInfo(string $tld): array
+		public function domainProductInfo(string $tld): stdClass
 		{
 			$tld = trim(mb_strtolower($tld));
 			return $this->call("/domains/product/$tld/", 'GET');
@@ -2353,9 +2353,9 @@ namespace Netim {
 		 *
 		 * @throws	NetimAPIException
 		 *
-		 * @return	array
+		 * @return	stdClass
 		 */
-		public function sslProductInfo(string $product): array
+		public function sslProductInfo(string $product): stdClass
 		{
 			$product = trim(mb_strtoupper($product));
 			return $this->call("/ssl/product/$product/", 'GET');
