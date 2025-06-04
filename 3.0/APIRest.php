@@ -284,6 +284,7 @@ namespace Netim {
 				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
 				$json = curl_exec($ch);
 				$result = json_decode($json, true);
+
 				$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 				curl_close($ch);
 
@@ -319,6 +320,7 @@ namespace Netim {
 							unset($this->_sessionID);
 							$this->_connected = false;
 						}
+
 						if (array_key_exists("message", $result ?? array()))
 							throw new NetimAPIException($result['message']);
 						else
@@ -2347,6 +2349,24 @@ namespace Netim {
 		}
 
 		/**
+		 * Returns the list of all prices for SSL products
+		 *
+		 * @param	string	$product	SSL product ID
+		 *
+		 * @return	array
+		 *
+		 * @link	https://support.netim.com/en/docs/api-soap-3-0/ssl-certificates/get-price-list
+		 */
+		public function sslPriceList(string $product = null)
+		{
+			$path = 'ssl/price/';
+			if (isset($product)) {
+				$path .= $product;
+			}
+			return $this->call($path, 'GET');
+		}
+
+		/**
 		 * Returns informations about a SSL product
 		 *
 		 * @param	string	$product	SSL product
@@ -3251,6 +3271,24 @@ namespace Netim {
 		public function brandProtectionProductInfo(string $product)
 		{
 			return $this->call("brandprotection/product/$product/", 'GET');
+		}
+
+		/**
+		 * Returns the list of all prices for brand protection products
+		 *
+		 * @param	string	$product	Brand protection product ID
+		 *
+		 * @return	array
+		 *
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/get-price-list
+		 */
+		public function brandProtectionPriceList(string $product = null)
+		{
+			$path = 'brandprotection/price/';
+			if (isset($product)) {
+				$path .= $product;
+			}
+			return $this->call($path, 'GET');
 		}
 
 		/**
