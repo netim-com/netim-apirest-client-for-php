@@ -2022,22 +2022,6 @@ namespace Netim {
 		}
 
 		/**
-		 * Returns all DNS records of a domain name 
-		 * 
-		 * @param string $domain Domain name
-		 * 
-		 * @throws NetimAPIException
-		 * 
-		 * @return array An array of StructDomainZoneList
-		 *
-		 */
-		public function domainZoneList(string $domain):array
-		{
-			$domain = strtolower($domain);
-			return $this->call("/domain/$domain/zone/", "GET");
-		}
-
-		/**
 		 * Creates an email address forwarded to recipients
 		 *
 		 * Example
