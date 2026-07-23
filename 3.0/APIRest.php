@@ -20,7 +20,7 @@
  * Then you can instantiate a APIRest object:
  * ```php
  * 		$name = 'AA001_user';
- * 		$key = 'ae60edc974fd9f019710bcf463113eb2053b434b49a2e8b8e5a2933632e7e355';
+ * 		$key = 'your_api_key';
  * 		$client = new APIRest($name, $key);
  * ```
  * 
@@ -92,6 +92,7 @@ namespace Netim {
 		private $_key;
 		private $_apiURL;
 		private $_preferences;
+		private $_source;
 
 		private $_lastRequestParams;
 		private $_lastRequestRessource;
@@ -250,6 +251,7 @@ namespace Netim {
 		public function call(string $ressource, string $httpVerb, array $params = array())
 		{
 			$httpVerb = strtoupper($httpVerb);
+			$ressource = ltrim($ressource, '/');
 
 			$this->_lastRequestRessource = $ressource;
 			$this->_lastRequestParams = $params;
@@ -390,9 +392,24 @@ namespace Netim {
 		 *
 		 * @throws NetimAPIException
 		 */
-		public function sessionOpen(array $preferences = []): void
+		public function sessionOpen(array $preferences = [], string $source = null): void
 		{
-			$this->call("session/", "POST", ["preferences" => $this->getPreferences()]);
+			if (empty($preferences)) {
+				$preferences = $this->getPreferences();
+			}
+
+			if (isset($source)) {
+				$this->_source = $source;
+			}
+
+			$body = ['preferences' => $preferences];
+
+			// conservé dans $_source pour que les sessions rouvertes automatiquement le gardent
+			if (isset($this->_source)) {
+				$body['source'] = $this->_source;
+			}
+
+			$this->call('session/', 'POST', $body);
 		}
 
 		/**
@@ -1316,7 +1333,7 @@ namespace Netim {
 		 *	$res = null;
 		 *	try
 		 *	{
-		 *		$res = $client->domainTransferTrade($domain, $authID, $idAdmin, $idTech, $idBilling, $nameservers);
+		 *		$res = $client->domainInternalTransfer($domain, $authID, $idAdmin, $idTech, $idBilling, $nameservers);
 		 *	}
 		 *	catch (NetimAPIexception $exception)
 		 *	{
@@ -1324,13 +1341,16 @@ namespace Netim {
 		 *	}
 		 *	//continue processing
 		 *	```
-		 * 
+		 *
 		 * @param string $domain name of the domain to transfer
 		 * @param string $authID authorisation code / EPP code (if applicable)
 		 * @param string $idAdmin a valid idAdmin
 		 * @param string $idTech a valid idTech
 		 * @param string $idBilling a valid idBilling
 		 * @param array $nameservers the nameservers for the domain
+		 * @param array $options additional options:
+		 *                       - type (string): 'push' or 'pull' (default 'pull')
+		 *                       - recipient (string): ID of the recipient account (mandatory when type is 'push')
 		 *
 		 * @throws NetimAPIException
 		 *
@@ -1338,16 +1358,19 @@ namespace Netim {
 		 *
 		 * @see domainInternalTransfer API http://support.netim.com/en/wiki/domainInternalTransfer
 		 */
-		public function domainInternalTransfer(string $domain, string $authID, string $idAdmin, string $idTech, string $idBilling, array $nameservers):stdClass
+		public function domainInternalTransfer(string $domain, string $authID, string $idAdmin, string $idTech, string $idBilling, array $nameservers, array $options = null):stdClass
 		{
-			$params[] = strtolower($domain);
-			$params["authID"] = $authID;
+			$domain = strtolower($domain);
 
-			$params["idAdmin"] = $idAdmin;
-			$params["idTech"] = $idTech;
-			$params["idBilling"] = $idBilling;
+			$params['authID'] = $authID;
+			$params['idAdmin'] = $idAdmin;
+			$params['idTech'] = $idTech;
+			$params['idBilling'] = $idBilling;
+			$params['nameservers'] = $nameservers;
 
-			$params["nameservers"] = $nameservers;
+			if (isset($options)) {
+				$params['options'] = $options;
+			}
 
 			return $this->call("domain/$domain/internal-transfer/", "PATCH", $params);
 		}
@@ -1771,9 +1794,15 @@ namespace Netim {
 		 * @see domainList API https://support.netim.com/en/wiki/QueryDomainList
 		 *
 		 */
-		public function domainList(array $filters = []): array
+		public function domainList(array $filters = [], string $tld = null): array
 		{
-			return $this->call('/domains/', 'POST', ['filters' => $filters]);
+			$params = ['filters' => $filters];
+
+			if (isset($tld)) {
+				$params['tld'] = strtolower($tld);
+			}
+
+			return $this->call('/domains/', 'POST', $params);
 		}
 
 		/**
@@ -1999,7 +2028,6 @@ namespace Netim {
 		 */
 		public function domainZoneInfo(string $domain)
 		{
-			$params[] = $domain;
 			return $this->call("/domain/$domain/zone/info/", 'GET');
 		}
 
@@ -2147,42 +2175,26 @@ namespace Netim {
 		}
 
 		/**
-		 * Updates a web forwarding 
-		 *
-		 * Example
-		 *	```php
-		 *	$fqdn = 'subdomain.myDomain.com';
-		 *	$target = 'myDomain.com';
-		 *	$type = 'DIRECT';
-		 *	$options = $array('header'=>301, 'protocol'=>ftp, 'title'=>'', 'parking'=>'', 'https'=>1);
-		 *	
-		 *	$res = null;
-		 *	try
-		 *	{
-		 *		$res = $client->domainWebFwdUpdate($fqdn, $target, $type, $options);
-		 *	}
-		 *	catch (NetimAPIexception $exception)
-		 *	{
-		 *		//do something when operation had an error
-		 *	}
-		 *	//continue processing
-		 *	```
+		 * Updates a web forwarding
 		 *
 		 * @param string $fqdn hostname (fully qualified domain name)
 		 * @param string $target target of the web forwarding
 		 * @param string $type type of the web forwarding. Accepted values are: "DIRECT", "IP", "MASKED" or "PARKING"
-		 * @param array $options contains StructOptionsFwd : settings of the web forwarding. An array with keys: header, protocol, title, parking and https.
+		 * @param array $options contains StructOptionsFwd : settings of the web forwarding. An array with keys: header, protocol, title and parking.
 		 *
 		 * @throws NetimAPIException
 		 *
 		 * @return StructOperationResponse giving information on the status of the operation
+		 *
+		 * @see StructOptionsFwd http://support.netim.com/en/wiki/StructOptionsFwd
 		 */
 		public function domainWebFwdUpdate(string $fqdn, string $target, string $type, array $options):stdClass
 		{
-			$params["target"] = $target;
-			$params["type"] = strtoupper($type);
-			$params["options"] = $options;
-			return $this->call("/domain/$fqdn/web-forwarding/", "PATCH", $params);
+			$params['target'] = $target;
+			$params['type'] = strtoupper($type);
+			$params['options'] = $options;
+
+			return $this->call("/domain/$fqdn/web-forwarding/", 'PATCH', $params);
 		}
 
 		/**
@@ -2249,13 +2261,18 @@ namespace Netim {
 		 * @see domainWebFwdCreate API http://support.netim.com/en/wiki/DomainWebFwdCreate
 		 * @see StructOptionsFwd http://support.netim.com/en/wiki/StructOptionsFwd
 		 */
-		public function sslCreate(string $prod, int $duration, array $CSRInfo, string $validation): stdClass
+		public function sslCreate(string $prod, int $duration, array $CSRInfo, string $validation, string $idClient = null): stdClass
 		{
 			$params = array();
 			$params["prod"] = $prod;
 			$params["duration"] = $duration;
 			$params["CSR"] = $CSRInfo;
 			$params["validation"] = $validation;
+
+			if (isset($idClient)) {
+				$params['idClient'] = $idClient;
+			}
+
 			return $this->call("/ssl/", "POST", $params);
 		}
 
@@ -2431,9 +2448,35 @@ namespace Netim {
 				'duration' => $duration,
 				'idOwner' => $idOwner,
 				'type' => $type,
-				'infos' => $infos,
+				'info' => $infos,
 			];
 			return $this->call('brandprotection/', 'POST', $params);
+		}
+
+		/**
+		 * Request the transfer of a brand protection to Netim
+		 *
+		 * @param	string	$reg_id 	Brand protection ID at the actual registry
+		 * @param	string	$label		Brand main label
+		 * @param	string	$product	Brand protection product ID
+		 * @param	string	$authID		Brand protection authorization code
+		 * @param	string	$idOwner	ID of the owner contact
+		 *
+		 * @return	StructOperationResponse
+		 *
+		 * @link	https://support.netim.com/en/docs/api-rest-3-0/brand-protections/transfer-protection
+		 */
+		public function brandProtectionTransfer(string $reg_id, string $label, string $product, string $authID, string $idOwner):stdClass
+		{
+			$params = [
+				'reg_id' => $reg_id,
+				'label' => $label,
+				'prod' => $product,
+				'authID' => $authID,
+				'idOwner' => $idOwner,
+			];
+
+			return $this->call('brandprotection/transfer/', 'POST', $params);
 		}
 
 		/**
@@ -2568,6 +2611,110 @@ namespace Netim {
 				'value' => $enable,
 			];
 			return $this->call("brandprotection/$id/preference/", 'PATCH', $params);
+		}
+
+		# -------------------------------------------------
+		# SECONDARY MARKET
+		# -------------------------------------------------
+		/**
+		 * Returns information about a domain listed on a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 * @param	string	$domain		Domain name
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketInfo(string $plateform, string $domain):stdClass
+		{
+			$domain = strtolower($domain);
+
+			return $this->call("secmarket/$plateform/$domain/", 'GET');
+		}
+
+		/**
+		 * Lists a domain on a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 * @param	string	$domain		Domain name
+		 * @param	array	$params		Listing parameters (e.g. price)
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketAdd(string $plateform, string $domain, array $params):stdClass
+		{
+			$domain = strtolower($domain);
+
+			return $this->call("secmarket/$plateform/$domain/", 'POST', ['params' => $params]);
+		}
+
+		/**
+		 * Unlinks a domain from a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 * @param	string	$domain		Domain name
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketUnlink(string $plateform, string $domain):stdClass
+		{
+			$domain = strtolower($domain);
+
+			return $this->call("secmarket/$plateform/$domain/", 'PATCH');
+		}
+
+		/**
+		 * Updates the price of a domain listed on a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 * @param	string	$domain		Domain name
+		 * @param	array	$params		Pricing parameters
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketSetPrice(string $plateform, string $domain, array $params):stdClass
+		{
+			$domain = strtolower($domain);
+
+			return $this->call("secmarket/$plateform/$domain/setprice/", 'PATCH', ['params' => $params]);
+		}
+
+		/**
+		 * Synchronizes the account with a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketSynchro(string $plateform):stdClass
+		{
+			return $this->call("secmarket/$plateform/", 'PUT');
+		}
+
+		/**
+		 * Removes a domain listed on a secondary market platform
+		 *
+		 * @param	string	$plateform	Platform name
+		 * @param	string	$domain		Domain name
+		 *
+		 * @throws	NetimAPIException
+		 *
+		 * @return	StructOperationResponse
+		 */
+		public function SecMarketRemove(string $plateform, string $domain):stdClass
+		{
+			$domain = strtolower($domain);
+
+			return $this->call("secmarket/$plateform/$domain/", 'DELETE');
 		}
 
 	}
